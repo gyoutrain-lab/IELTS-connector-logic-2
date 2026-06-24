@@ -2,62 +2,70 @@
 <html>
 <head>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background: #f4f7f6; }
-        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        textarea { width: 100%; height: 80px; margin: 15px 0; padding: 10px; border: 2px solid #3498db; border-radius: 5px; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; background: #2c3e50; color: white; margin-right: 10px; }
-        #score { font-weight: bold; color: #27ae60; margin-top: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
+        .app-container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 100px; margin: 15px 0; padding: 10px; border: 2px solid #3498db; border-radius: 8px; }
+        button { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; background: #2c3e50; color: white; margin-right: 5px; font-weight: bold; }
+        .feedback { margin-top: 20px; padding: 15px; border-radius: 8px; font-weight: 500; }
+        .band-9 { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .band-67 { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .na { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h3>Band 9 Syntax Drill</h3>
-        <p id="prompt">Loading...</p>
-        <button onclick="speak()">🔊 Listen</button>
-        <textarea id="userInput" placeholder="Transform this to Band 9 syntax..."></textarea>
-        <br>
-        <button onclick="checkSyntax()">Submit</button>
-        <button onclick="nextPrompt()">Next Prompt ➔</button>
-        <p id="score"></p>
-    </div>
+
+<div class="app-container">
+    <h2 id="title">Band 9 Logical Connector Drill</h2>
+    <p id="prompt">Loading...</p>
+    <button onclick="speakText(document.getElementById('prompt').innerText)">🔊 Play Prompt</button>
+    <textarea id="userInput" placeholder="Apply your Band 9 blueprint here..."></textarea>
+    <button onclick="evaluateResponse()">Submit</button>
+    <button onclick="nextPrompt()">Next ➔</button>
+    <div id="feedback" class="feedback" style="display:none;"></div>
+</div>
 
 <script>
 const prompts = [
-    "Automation replaces human labor. It raises ethical concerns.",
-    "Education is expensive. It is a necessary investment.",
-    "Online shopping is convenient. It harms local businesses.",
-    "Medical standards are strict. They ensure patient safety.",
-    "Public transport is slow. It reduces urban pollution."
-    // Add up to 50 here
+    "Automation replaces human labor. It also raises ethical concerns.",
+    "Nurses must learn international standards. They will be more competitive globally.",
+    "Hospitals use digital records. Errors in medication decrease.",
+    "Standardized training is expensive. It ensures high quality of care."
 ];
+let idx = 0;
 
-let currentIndex = 0;
-
-function speak() {
-    const msg = new SpeechSynthesisUtterance(document.getElementById('prompt').innerText);
+function speakText(text) {
+    const msg = new SpeechSynthesisUtterance(text);
     window.speechSynthesis.speak(msg);
 }
 
-function checkSyntax() {
+function evaluateResponse() {
     const input = document.getElementById('userInput').value.toLowerCase();
-    const scoreDiv = document.getElementById('score');
+    const fb = document.getElementById('feedback');
+    fb.style.display = 'block';
     
-    // Logic: If input contains a subordinating conjunction and semicolon/comma structure
-    if (input.includes('while') || input.includes('whereby') || input.includes('insofar as')) {
-        scoreDiv.innerText = "Score: Band 9 - Advanced Syntactic Integration";
-    } else {
-        scoreDiv.innerText = "Score: N/A - Keep practicing the connector!";
+    let score = "NA";
+    let message = "Keep trying! You need to use subordinating connectors (While, Whereby, Insofar as) to link these ideas.";
+
+    if ((input.includes('while') || input.includes('whereby') || input.includes('insofar as')) && input.includes(';')) {
+        score = "Band 9";
+        message = "Excellent! You have achieved Band 9 structural integration by using complex subordination and punctuation.";
+    } else if (input.length > 20) {
+        score = "Band 6-7";
+        message = "Your sentence is clear, but it lacks the 'Band 9' syntactic complexity. Try using a semicolon and a more precise logical connector.";
     }
+
+    fb.className = "feedback " + (score === "Band 9" ? "band-9" : score === "Band 6-7" ? "band-67" : "na");
+    fb.innerHTML = `<strong>Result: ${score}</strong><br>${message}`;
+    speakText(`The estimated score is ${score}. ${message}`);
 }
 
 function nextPrompt() {
-    currentIndex = (currentIndex + 1) % prompts.length;
-    document.getElementById('prompt').innerText = prompts[currentIndex];
+    idx = (idx + 1) % prompts.length;
+    document.getElementById('prompt').innerText = prompts[idx];
+    document.getElementById('feedback').style.display = 'none';
     document.getElementById('userInput').value = "";
-    document.getElementById('score').innerText = "";
 }
-
-window.onload = () => document.getElementById('prompt').innerText = prompts[0];
+document.getElementById('prompt').innerText = prompts[0];
 </script>
 </body>
 </html>
