@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; max-width: 700px; margin: 40px auto; padding: 20px; background: #f4f7f6; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 80px; margin: 15px 0; padding: 10px; border: 2px solid #3498db; border-radius: 5px; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; background: #2c3e50; color: white; margin-right: 10px; }
+        #score { font-weight: bold; color: #27ae60; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h3>Band 9 Syntax Drill</h3>
+        <p id="prompt">Loading...</p>
+        <button onclick="speak()">🔊 Listen</button>
+        <textarea id="userInput" placeholder="Transform this to Band 9 syntax..."></textarea>
+        <br>
+        <button onclick="checkSyntax()">Submit</button>
+        <button onclick="nextPrompt()">Next Prompt ➔</button>
+        <p id="score"></p>
+    </div>
+
+<script>
+const prompts = [
+    "Automation replaces human labor. It raises ethical concerns.",
+    "Education is expensive. It is a necessary investment.",
+    "Online shopping is convenient. It harms local businesses.",
+    "Medical standards are strict. They ensure patient safety.",
+    "Public transport is slow. It reduces urban pollution."
+    // Add up to 50 here
+];
+
+let currentIndex = 0;
+
+function speak() {
+    const msg = new SpeechSynthesisUtterance(document.getElementById('prompt').innerText);
+    window.speechSynthesis.speak(msg);
+}
+
+function checkSyntax() {
+    const input = document.getElementById('userInput').value.toLowerCase();
+    const scoreDiv = document.getElementById('score');
+    
+    // Logic: If input contains a subordinating conjunction and semicolon/comma structure
+    if (input.includes('while') || input.includes('whereby') || input.includes('insofar as')) {
+        scoreDiv.innerText = "Score: Band 9 - Advanced Syntactic Integration";
+    } else {
+        scoreDiv.innerText = "Score: N/A - Keep practicing the connector!";
+    }
+}
+
+function nextPrompt() {
+    currentIndex = (currentIndex + 1) % prompts.length;
+    document.getElementById('prompt').innerText = prompts[currentIndex];
+    document.getElementById('userInput').value = "";
+    document.getElementById('score').innerText = "";
+}
+
+window.onload = () => document.getElementById('prompt').innerText = prompts[0];
+</script>
+</body>
+</html>
